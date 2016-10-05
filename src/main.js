@@ -18,7 +18,7 @@ function red(rootFolder, options, cb) {
 
             each(files, (file, cb) => {
                 const pieces = file.split(/\./g)
-                const partialName = pieces.slice(0, pieces.length - 1).join('.').substring(rootFolder.length)
+                const partialName = pieces.slice(0, pieces.length - 1).join('.').substring(rootFolder.length).replace(/\//g, '_')
                 console.log(`  Partial file ${partialName}`)
 
                 fs.readFile(file, { encoding: 'utf8' }, (err, text) => {
@@ -45,7 +45,7 @@ function red(rootFolder, options, cb) {
 
         console.log(`Compiling pages`)
 
-        const template = Handlebars.compile(`{{> (layout)}}`)
+        const template = Handlebars.compile(`{{> (lookup . 'layout')}}`)
 
         glob(`${rootFolder}/compositions/**/*.js`, (err, files) => {
             each(files, (file, cb) => {

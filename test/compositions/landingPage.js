@@ -1,3 +1,4 @@
 module.exports = {
-    layout: 'layouts/main',
+    layout: 'layouts_main',
+    page: 'pages_landingPage'
 }
