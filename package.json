@@ -21,7 +21,7 @@
     "glob": "7.1.0",
     "gulp-util": "3.0.7",
     "gulp": "3.9.1",
-    "handlebars": "4.0.5",
-    "through2": "2.0.1"
+    "through2": "2.0.1",
+    "mustache.ts": "aguldstrand/mustache.ts"
   }
 }

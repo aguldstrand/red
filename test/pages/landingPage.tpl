@@ -1,5 +1,5 @@
 {{#articles}}
     <div>
-        {{> components_articlePuff}}
+        {{>"components_articlePuff"}}
     </div>
 {{/articles}}

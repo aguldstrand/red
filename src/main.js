@@ -1,7 +1,7 @@
 const each = require('async/each')
 const fs = require('fs')
 const glob = require('glob')
-const Handlebars = require('handlebars')
+const mts = require('mustache.ts')
 const parallel = require('async/parallel')
 const path = require('path')
 const waterfall = require('async/waterfall')
@@ -11,6 +11,9 @@ function red(rootFolder, options, cb) {
     const outpFolder = options.outpFolder || './dist'
 
     rootFolder = rootFolder + (rootFolder.endsWith('/') ? '' : '/')
+
+    const helpers = {}
+    const partials = {}
 
     // Helper to find and register templates
     function register(path, cb) {
@@ -22,7 +25,11 @@ function red(rootFolder, options, cb) {
                 console.log(`  Partial file ${partialName}`)
 
                 fs.readFile(file, { encoding: 'utf8' }, (err, text) => {
-                    Handlebars.registerPartial(partialName, text)
+                    const fn = mts.makePartial(mts.compile(text), helpers, partials)
+
+                    partials[partialName] = frame => {
+                        return fn(frame)
+                    }
                     cb()
                 })
             }, cb)
@@ -45,7 +52,7 @@ function red(rootFolder, options, cb) {
 
         console.log(`Compiling pages`)
 
-        const template = Handlebars.compile(`{{> (lookup . 'layout')}}`)
+        const template = mts.makeTemplate(mts.compile(`{{>layout}}`), helpers, partials)
 
         glob(`${rootFolder}/compositions/**/*.js`, (err, files) => {
             each(files, (file, cb) => {
@@ -58,7 +65,7 @@ function red(rootFolder, options, cb) {
                 const a = require('.' + dataPath)
                 const data = typeof (a) === 'function' ? a() : a;
 
-                template(data)
+                const outp = template(data)
             }, cb)
         })
 
